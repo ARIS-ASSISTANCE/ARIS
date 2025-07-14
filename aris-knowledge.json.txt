@@ -1,0 +1,20 @@
+[
+  { "command": "hi", "response": "Hello! I'm ARIS, your assistant." },
+  { "command": "hello", "response": "Hi there! How can I help you today?" },
+  { "command": "what's your name", "response": "I'm ARIS, your personal AI." },
+  { "command": "how are you", "response": "I'm doing great. Thanks for asking!" },
+  { "command": "what can you do", "response": "I can help with tasks, answer questions, set reminders, and more." },
+  { "command": "tell me a joke", "response": "Why don’t robots ever get tired? Because they recharge!" },
+  { "command": "set a reminder", "response": "Sure! What should I remind you about?" },
+  { "command": "play music", "response": "Opening YouTube for music..." },
+  { "command": "open youtube", "response": "Redirecting to YouTube..." },
+  { "command": "who is the prime minister of india", "response": "Narendra Modi is the Prime Minister of India." },
+  { "command": "what is ai", "response": "AI stands for Artificial Intelligence." },
+  { "command": "translate hello to hindi", "response": "Hello in Hindi is 'नमस्ते' (Namaste)." },
+  { "command": "what's the weather", "response": "Let me check the weather for you... (feature coming soon)" },
+  { "command": "add task", "response": "Sure, what task would you like to add?" },
+  { "command": "show my tasks", "response": "Here are your tasks: (feature coming soon)" },
+  { "command": "clear chat", "response": "Chat cleared!" },
+  { "command": "goodbye", "response": "Goodbye! See you soon." },
+  { "command": "what's the capital of france", "response": "The capital of France is Paris." }
+]

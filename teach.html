@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Teach ARIS - Unknown Questions</title>
+</head>
+<body style="background:#111; color:white; font-family:sans-serif; padding:2rem;">
+  <h2>🤖 Teach ARIS – Unknown Question Handler</h2>
+  <p>Below are the questions ARIS couldn’t answer. You can type a reply and teach ARIS instantly.</p>
+  <div id="questions">Loading questions...</div>
+<button onclick="window.location.href='upload-csv.html'"
+        style="position:fixed; bottom:20px; right:20px; background:#00ffc8; color:#000; border:none; padding:10px 16px; border-radius:8px; font-weight:bold; cursor:pointer;">
+  📤 Upload CSV to Teach ARIS
+</button>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+    import {
+      getDatabase,
+      ref,
+      get,
+      set,
+      remove,
+      child
+    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-database.js";
+
+    // ✅ Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyBs7Ig4mXccOco7uLwZrzcUPGOxYgjEhfw",
+      authDomain: "myvoiceai07.firebaseapp.com",
+      projectId: "myvoiceai07",
+      storageBucket: "myvoiceai07.appspot.com",
+      messagingSenderId: "612070825870",
+      appId: "1:612070825870:web:787c63ec83c8eec3e2cedf",
+      measurementId: "G-DD4NL3DM6Z",
+      databaseURL: "https://myvoiceai07-default-rtdb.asia-southeast1.firebasedatabase.app/"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const unknownRef = ref(db, "unknown");
+    const listDiv = document.getElementById("questions");
+
+    // ✅ Load unknown questions
+    async function loadQuestions() {
+      const snap = await get(unknownRef);
+      if (!snap.exists()) {
+        listDiv.innerHTML = "<p>No unknown questions found! 🎉</p>";
+        return;
+      }
+
+      const data = snap.val();
+      listDiv.innerHTML = "";
+
+      for (let id in data) {
+        const q = data[id].question;
+        const item = document.createElement("div");
+        item.style.marginBottom = "15px";
+        item.style.borderBottom = "1px solid #444";
+        item.style.paddingBottom = "10px";
+
+        const inputId = `ans-${id}`;
+        const safeId = id; // avoid quoting issues
+        item.innerHTML = `
+          <strong>❓ ${q}</strong><br/>
+          <input type="text" id="${inputId}" placeholder="Enter answer here..." style="width:60%; padding:6px; border-radius:6px; margin-top:6px;" />
+          <button id="save-${safeId}" style="margin-left:10px; padding:6px 12px; background:#00ffc8; border:none; border-radius:6px;">✅ Save</button>
+        `;
+
+        listDiv.appendChild(item);
+
+        // Attach event safely
+        document.addEventListener("click", function handler(e) {
+          if (e.target && e.target.id === `save-${safeId}`) {
+            saveAnswer(safeId, q);
+            document.removeEventListener("click", handler); // cleanup
+          }
+        });
+      }
+    }
+
+    // ✅ Save answer and remove from unknown
+    async function saveAnswer(id, question) {
+      const input = document.getElementById(`ans-${id}`);
+      const answer = input.value.trim();
+      if (!answer) return alert("❌ Answer cannot be empty.");
+
+      const learnRef = ref(db, "learned/" + encodeURIComponent(question.toLowerCase()));
+      await set(learnRef, answer);
+
+      const delRef = child(ref(db, "unknown"), id);
+      await remove(delRef);
+
+      alert(`✅ ARIS has learned the answer to: "${question}"`);
+      loadQuestions();
+    }
+
+    loadQuestions();
+  </script>
+</body>
+</html>

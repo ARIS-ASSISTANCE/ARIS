@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+</head>
+
+<body>
+  
+</body>
+
+</html>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ARIS Login</title>
+</head>
+<body style="background:#111; color:white; font-family:sans-serif; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh;">
+  <h2>🔐 Login to ARIS</h2>
+  <input id="name" placeholder="Name" style="padding:10px; margin:10px; width:250px;" />
+  <input id="email" placeholder="Email" type="email" style="padding:10px; margin:10px; width:250px;" />
+  <input id="password" placeholder="Password" type="password" style="padding:10px; margin:10px; width:250px;" />
+  <button onclick="loginUser()" style="padding:10px 20px; background:#00ffc8; border:none; border-radius:6px; cursor:pointer;">Login</button>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBs7Ig4mXccOco7uLwZrzcUPGOxYgjEhfw",
+      authDomain: "myvoiceai07.firebaseapp.com",
+      projectId: "myvoiceai07",
+      storageBucket: "myvoiceai07.appspot.com",
+      messagingSenderId: "612070825870",
+      appId: "1:612070825870:web:787c63ec83c8eec3e2cedf",
+      measurementId: "G-DD4NL3DM6Z",
+      databaseURL: "https://myvoiceai07-default-rtdb.asia-southeast1.firebasedatabase.app/"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    window.loginUser = async function () {
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      if (!name || !email || !password) {
+        alert("Please fill all fields.");
+        return;
+      }
+
+      const userId = email.replace(/[@.]/g, "_");
+      localStorage.setItem("aris-user", userId);
+      localStorage.setItem("aris-name", name);
+
+      const userRef = ref(db, "users/" + userId + "/profile");
+      await set(userRef, {
+        name,
+        email,
+        password,
+        createdAt: new Date().toLocaleString()
+      });
+
+      window.location.href = "index.html";
+    };
+  </script>
+</body>
+</html>

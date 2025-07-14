@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+</head>
+
+<body>
+  
+</body>
+
+</html>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Upload CSV to Teach ARIS</title>
+</head>
+<body style="font-family:sans-serif; background:#111; color:white; padding:2rem;">
+  <h2>📥 Upload CSV to Teach ARIS</h2>
+  <p>Select a CSV file with <b>question,answer</b> columns (no quotes, no header is fine).</p>
+  <input type="file" id="csvFile" accept=".csv" style="margin-bottom: 10px;" />
+  <br>
+  <button onclick="uploadCSV()" style="padding: 8px 16px; background: #00ffc8; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">Upload</button>
+  <pre id="log" style="margin-top:1rem; color:lightgreen; background:#000; padding:1rem; border-radius:8px;"></pre>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBs7Ig4mXccOco7uLwZrzcUPGOxYgjEhfw",
+      authDomain: "myvoiceai07.firebaseapp.com",
+      projectId: "myvoiceai07",
+      storageBucket: "myvoiceai07.appspot.com",
+      messagingSenderId: "612070825870",
+      appId: "1:612070825870:web:787c63ec83c8eec3e2cedf",
+      measurementId: "G-DD4NL3DM6Z",
+      databaseURL: "https://myvoiceai07-default-rtdb.asia-southeast1.firebasedatabase.app/"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const log = document.getElementById("log");
+
+    window.uploadCSV = function () {
+      const file = document.getElementById("csvFile").files[0];
+      if (!file) return alert("Please select a CSV file first.");
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const lines = e.target.result.trim().split("\n");
+        log.innerText = "Uploading...\n";
+
+        lines.forEach((line, index) => {
+          const [questionRaw, ...answerParts] = line.split(",");
+          const question = questionRaw.trim().toLowerCase();
+          const answer = answerParts.join(",").trim();
+
+          if (question && answer) {
+            const entryRef = ref(db, "learned/" + encodeURIComponent(question));
+            set(entryRef, answer);
+            log.innerText += `✅ ${index + 1}) Learned: "${question}" ➜ "${answer}"\n`;
+          } else {
+            log.innerText += `❌ ${index + 1}) Skipped: Invalid format\n`;
+          }
+        });
+
+        log.innerText += "\n✅ Done uploading!";
+      };
+
+      reader.readAsText(file);
+    };
+  </script>
+</body>
+</html>
